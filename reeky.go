@@ -8,4 +8,6 @@ type App struct {
 	Engine EngineIface
 }
 
-func (app *App) RunOn(port string) {}
+func (app *App) RunOn(port string) {
+	app.Engine.Run(":" + port)
+}
