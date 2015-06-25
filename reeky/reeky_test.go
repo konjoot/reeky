@@ -2,6 +2,7 @@ package reeky_test
 
 import (
 	. "github.com/konjoot/reeky"
+	. "github.com/konjoot/reeky/matchers"
 	. "github.com/konjoot/reeky/mocks"
 
 	. "github.com/onsi/ginkgo"
