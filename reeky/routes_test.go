@@ -1,9 +1,9 @@
 package reeky_test
 
 import (
-	"github.com/gin-gonic/gin"
 	. "github.com/konjoot/reeky/matchers"
 	. "github.com/konjoot/reeky/reeky"
+	"github.com/labstack/echo"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -11,17 +11,16 @@ import (
 var _ = Describe("App", func() {
 	var (
 		app    *App
-		engine *gin.Engine
+		engine *echo.Echo
 	)
 
 	BeforeEach(func() {
-		gin.SetMode(gin.TestMode)
-		engine = gin.New()
+		engine = echo.New()
 		app = &App{Engine: engine}
-		app.SetRoutes()
+		app.Setup()
 	})
 
-	Describe("Routes", func() {
+	FDescribe("Routes", func() {
 		It("/boards", func() {
 			Expect(engine).To(Handle("GET").On("/boards/:id").By("Getter"))
 			Expect(engine).To(Handle("GET").On("/boards").By("ListGetter"))

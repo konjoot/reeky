@@ -1,17 +1,20 @@
 package reeky
 
 import (
-	"github.com/gin-gonic/gin"
+	ifaces "github.com/konjoot/reeky/interfaces"
 )
 
 type App struct {
-	Engine *gin.Engine
+	Ok     bool
+	Engine ifaces.EngineIface
 }
 
 func (app *App) RunOn(port string) {
+	app.Setup()
 	app.Engine.Run(":" + port)
 }
 
-func (app *App) SetRoutes() (ok bool) {
+func (app *App) Setup() (ok bool) {
+	app.Ok, ok = true, true
 	return
 }

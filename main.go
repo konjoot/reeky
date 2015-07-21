@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/konjoot/reeky/reeky"
+	"github.com/labstack/echo"
 )
 
 func main() {
-	app := &reeky.App{Engine: gin.Default()}
+	app := &reeky.App{Engine: echo.New()}
 	app.RunOn("8080")
 }
