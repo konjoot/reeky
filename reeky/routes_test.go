@@ -20,7 +20,7 @@ var _ = Describe("App", func() {
 		app.Setup()
 	})
 
-	FDescribe("Routes", func() {
+	Describe("Routes", func() {
 		It("/boards", func() {
 			Expect(engine).To(Handle("GET").On("/boards/:id").By("Getter"))
 			Expect(engine).To(Handle("GET").On("/boards").By("ListGetter"))

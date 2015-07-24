@@ -7,11 +7,11 @@ import (
 )
 
 func Handle(method string) *handleMatcher {
-	return &handleMatcher{expected: &echo.Route{Method: method}}
+	return &handleMatcher{expected: echo.Route{Method: method}}
 }
 
 type handleMatcher struct {
-	expected *echo.Route
+	expected echo.Route
 }
 
 func (m *handleMatcher) On(path string) *handleMatcher {

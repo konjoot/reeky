@@ -1,20 +1,17 @@
 package reeky
 
 import (
-	ifaces "github.com/konjoot/reeky/interfaces"
+	// "fmt"
+	. "github.com/konjoot/reeky/interfaces"
 )
 
 type App struct {
 	Ok     bool
-	Engine ifaces.EngineIface
+	Engine EngineIface
 }
 
 func (app *App) RunOn(port string) {
 	app.Setup()
+	// fmt.Printf("Reeky is running on port %s\nuse Ctrl-C for exit\n\n", port)
 	app.Engine.Run(":" + port)
-}
-
-func (app *App) Setup() (ok bool) {
-	app.Ok, ok = true, true
-	return
 }
