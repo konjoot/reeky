@@ -13,7 +13,7 @@ func BeOk() *beOkMatcher {
 type beOkMatcher struct{}
 
 func (m *beOkMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*App).Ok)
+	return (&matchers.BeTrueMatcher{}).Match(actual.(*App).Ok())
 }
 
 func (m *beOkMatcher) FailureMessage(actual interface{}) (message string) {

@@ -17,7 +17,7 @@ var _ = Describe("App", func() {
 	BeforeEach(func() {
 		engine = echo.New()
 		app = &App{Engine: engine}
-		app.Setup()
+		app.SetRoutes()
 	})
 
 	Describe("Routes", func() {

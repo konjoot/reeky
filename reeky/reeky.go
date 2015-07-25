@@ -6,12 +6,22 @@ import (
 )
 
 type App struct {
-	Ok     bool
-	Engine EngineIface
+	routes  bool
+	midware bool
+	Engine  EngineIface
 }
 
 func (app *App) RunOn(port string) {
 	app.Setup()
 	// fmt.Printf("Reeky is running on port %s\nuse Ctrl-C for exit\n\n", port)
 	app.Engine.Run(":" + port)
+}
+
+func (app *App) Setup() {
+	app.midware = app.SetMiddleWare()
+	app.routes = app.SetRoutes()
+}
+
+func (app *App) Ok() bool {
+	return app.midware && app.routes
 }
