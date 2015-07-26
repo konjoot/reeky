@@ -1,9 +1,11 @@
 package matchers
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
+	"strings"
 )
 
 func Handle(method string) *handleMatcher {
@@ -19,19 +21,33 @@ func (m *handleMatcher) On(path string) *handleMatcher {
 	return m
 }
 
-func (m *handleMatcher) By(handler string) *handleMatcher {
+func (m *handleMatcher) By(handler string) *baseMatcher {
 	m.expected.Handler = "github.com/konjoot/reeky/reeky." + handler
-	return m
+	return Matcher(m)
 }
 
-func (m *handleMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.ContainElementMatcher{Element: m.expected}).Match(actual.(*echo.Echo).Routes())
+func (m *handleMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.ContainElementMatcher{Element: m.expected}
 }
 
-func (m *handleMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*echo.Echo).Routes(), "to have route", m.expected)
+func (m *handleMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*echo.Echo).Routes()
 }
 
-func (m *handleMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*echo.Echo).Routes(), "not to have route", m.expected)
+func (_ *handleMatcher) Format(actual interface{}) string {
+	s := make([]string, 1)
+
+	for _, route := range actual.(*echo.Echo).Routes() {
+		s = append(s, fmt.Sprintf("%#v", route))
+	}
+
+	return "[  " + strings.Join(s, "\n\t   ") + "  ]"
+}
+
+func (_ *handleMatcher) Message() string {
+	return "to have route"
+}
+
+func (m *handleMatcher) String() (s string) {
+	return fmt.Sprintf("%#v", m.expected)
 }

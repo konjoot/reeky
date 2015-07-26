@@ -1,6 +1,7 @@
 package mocks
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
 	"reflect"
 	"runtime"
@@ -33,6 +34,10 @@ func (e *EngineMock) Use(m ...echo.Middleware) {
 
 func (e *EngineMock) MiddleWares() []string {
 	return e.midwares
+}
+
+func (e *EngineMock) String() string {
+	return fmt.Sprintf("EngineMock{running: \"%t\", port: \"%s\"}", e.running, e.port)
 }
 
 func (e *EngineMock) Get(path string, h echo.Handler)    {}

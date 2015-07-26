@@ -2,24 +2,33 @@ package matchers
 
 import (
 	. "github.com/konjoot/reeky/reeky"
-	"github.com/onsi/gomega/format"
+
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
 )
 
-func BeOk() *beOkMatcher {
-	return &beOkMatcher{}
+func BeOk() *baseMatcher {
+	return Matcher(&beOkMatcher{})
 }
 
 type beOkMatcher struct{}
 
-func (m *beOkMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*App).Ok())
+func (m *beOkMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.BeTrueMatcher{}
 }
 
-func (m *beOkMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "to have status Ok")
+func (m *beOkMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*App).Ok()
 }
 
-func (m *beOkMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "not to have status Ok")
+func (m *beOkMatcher) Format(actual interface{}) string {
+	return actual.(*App).String()
+}
+
+func (_ *beOkMatcher) Message() string {
+	return "to be Ok"
+}
+
+func (_ *beOkMatcher) String() (s string) {
+	return
 }

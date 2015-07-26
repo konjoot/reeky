@@ -1,32 +1,42 @@
 package matchers
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
 	"reflect"
 	"runtime"
+	"strings"
 
 	. "github.com/konjoot/reeky/mocks"
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
 )
 
-func UseMiddleWare(midware echo.MiddlewareFunc) *useMiddleWareMatcher {
+func UseMiddleWare(midware echo.MiddlewareFunc) *baseMatcher {
 	name := runtime.FuncForPC(reflect.ValueOf(midware).Pointer()).Name()
-	return &useMiddleWareMatcher{midware: name}
+	return Matcher(&useMiddleWareMatcher{midware: name})
 }
 
 type useMiddleWareMatcher struct {
 	midware string
 }
 
-func (m *useMiddleWareMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.ContainElementMatcher{Element: m.midware}).Match(actual.(*EngineMock).MiddleWares())
+func (m *useMiddleWareMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.ContainElementMatcher{Element: m.midware}
 }
 
-func (m *useMiddleWareMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).MiddleWares(), "to have middleware", m.midware)
+func (_ *useMiddleWareMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*EngineMock).MiddleWares()
 }
 
-func (m *useMiddleWareMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).MiddleWares(), "not to have middleware", m.midware)
+func (_ *useMiddleWareMatcher) Format(actual interface{}) string {
+	return "[  " + strings.Join(actual.(*EngineMock).MiddleWares(), "\n\t   ") + "  ]"
+}
+
+func (_ *useMiddleWareMatcher) Message() string {
+	return "to have middleware"
+}
+
+func (m *useMiddleWareMatcher) String() (s string) {
+	return fmt.Sprintf("%#v", m.midware)
 }

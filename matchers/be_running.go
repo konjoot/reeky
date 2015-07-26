@@ -2,24 +2,32 @@ package matchers
 
 import (
 	. "github.com/konjoot/reeky/mocks"
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
 )
 
-func BeRunning() *beRunningMatcher {
-	return &beRunningMatcher{}
+func BeRunning() *baseMatcher {
+	return Matcher(&beRunningMatcher{})
 }
 
 type beRunningMatcher struct{}
 
-func (m *beRunningMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*EngineMock).IsRunning())
+func (m *beRunningMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.BeTrueMatcher{}
 }
 
-func (m *beRunningMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "to be running")
+func (m *beRunningMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*EngineMock).IsRunning()
 }
 
-func (m *beRunningMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "not to be running")
+func (m *beRunningMatcher) Format(actual interface{}) string {
+	return actual.(*EngineMock).String()
+}
+
+func (_ *beRunningMatcher) Message() string {
+	return "to be running"
+}
+
+func (_ *beRunningMatcher) String() (s string) {
+	return
 }

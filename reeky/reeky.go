@@ -1,7 +1,7 @@
 package reeky
 
 import (
-	// "fmt"
+	"fmt"
 	. "github.com/konjoot/reeky/interfaces"
 )
 
@@ -24,4 +24,8 @@ func (app *App) Setup() {
 
 func (app *App) Ok() bool {
 	return app.midware && app.routes
+}
+
+func (app *App) String() string {
+	return fmt.Sprintf("App{Ok: \"%t\"}", app.Ok())
 }
