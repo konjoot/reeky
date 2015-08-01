@@ -2,7 +2,6 @@ package reeky_test
 
 import (
 	. "github.com/konjoot/reeky/reeky"
-	"github.com/labstack/echo"
 
 	. "github.com/konjoot/reeky/matchers"
 	. "github.com/konjoot/reeky/mocks"
@@ -15,22 +14,21 @@ import (
 
 var _ = Describe("Handlers", func() {
 	var (
+		form     map[string]string
 		context  *echo.Context
 		entity   *ResourceMock
-		request  *http.Request
 		response *httptest.ResponseRecorder
-		form     map[string]string
 	)
 
 	BeforeEach(func() {
 		form = map[string]string{"Name": "Test", "Desc": "TestBoard"}
-		request = test.JsonRequest("POST", "/boards", form)
-		response = test.Response()
+		response = httptest.NewRecorder()
 	})
 
 	Describe("Creator", func() {
 		JustBeforeEach(func() {
-			context = test.Context(request, response, entity)
+			request := http.NewRequest("POST", "/tests", test.NewJsonReader(form))
+			context := test.Context(request, response, entity)
 			Creator(context)
 		})
 
@@ -42,8 +40,10 @@ var _ = Describe("Handlers", func() {
 			It("should create entity and return right response", func() {
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).To(BeCreated())
+				Expect(response).To(HaveStatus("201"))
 				Expect(response).To(HaveHeader("Location").WithUrlFor(entity))
 				Expect(response).To(HaveEmptyBody())
+				Expect(context).NotTo(HaveErrors())
 			})
 		})
 
@@ -52,11 +52,13 @@ var _ = Describe("Handlers", func() {
 				entity = &ResourseMock{Conflict: true}
 			})
 
-			It("should not create entity and return right error message", func() {
+			It("should not create entity and set errors to context", func() {
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
+				Expect(response).NotTo(HaveStatus("201"))
 				Expect(response).NotTo(HaveHeader("Location"))
 				Expect(response).To(HaveEmptyBody())
+				Expect(context).To(HaveErrors())
 			})
 		})
 
@@ -65,11 +67,23 @@ var _ = Describe("Handlers", func() {
 				entity = &ResourseMock{Invalid: true}
 			})
 
-			It("should not create entity and return right error message", func() {
+			It("should not create entity and set errors to context", func() {
 				Expect(form).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
+				Expect(response).NotTo(HaveStatus("201"))
 				Expect(response).NotTo(HaveHeader("Location"))
 				Expect(response).To(HaveEmptyBody())
+				Expect(context).To(HaveErrors())
+			})
+		})
+
+		Describe("negative case (no resorce binded)", func() {
+			It("should not create entity and set errors to context", func() {
+				Expect(entity).To(BeNil())
+				Expect(response).NotTo(HaveStatus("201"))
+				Expect(response).NotTo(HaveHeader("Location"))
+				Expect(response).To(HaveEmptyBody())
+				Expect(context).To(HaveErrors())
 			})
 		})
 	})
