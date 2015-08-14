@@ -2,6 +2,7 @@ package reeky_test
 
 import (
 	. "github.com/konjoot/reeky/reeky"
+	"github.com/labstack/echo"
 
 	. "github.com/konjoot/reeky/matchers"
 	. "github.com/konjoot/reeky/mocks"
@@ -14,6 +15,7 @@ import (
 
 var _ = Describe("Handlers", func() {
 	var (
+		err      error
 		form     map[string]string
 		context  *echo.Context
 		entity   *ResourceMock
@@ -29,7 +31,7 @@ var _ = Describe("Handlers", func() {
 		JustBeforeEach(func() {
 			request := http.NewRequest("POST", "/tests", test.NewJsonReader(form))
 			context := test.Context(request, response, entity)
-			Creator(context)
+			err := Creator(context)
 		})
 
 		Describe("positive case", func() {
@@ -38,36 +40,52 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should create entity and return right response", func() {
+				Expect(err).To(BeNil())
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).To(BeCreated())
 				Expect(response).To(HaveStatus("201"))
 				Expect(response).To(HaveHeader("Location").WithUrlFor(entity))
 				Expect(response).To(HaveEmptyBody())
-				Expect(context).NotTo(HaveErrors())
 			})
 		})
 
-		Describe("negative case (conflict)", func() {
+		Describe("negative case (Conflict)", func() {
 			BeforeEach(func() {
 				entity = &ResourseMock{Conflict: true}
 			})
 
 			It("should not create entity and set errors to context", func() {
+				Expect(err).To(HaveType(ConflictError))
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response).NotTo(HaveStatus("201"))
 				Expect(response).NotTo(HaveHeader("Location"))
 				Expect(response).To(HaveEmptyBody())
-				Expect(context).To(HaveErrors())
 			})
 		})
 
-		Describe("negative case (invalid params)", func() {
+		Describe("negative case (Unprocessable Entity)", func() {
 			BeforeEach(func() {
 				entity = &ResourseMock{Invalid: true}
 			})
 
 			It("should not create entity and set errors to context", func() {
+				Expect(err).To(HaveType(ValidationError))
+				Expect(form).To(BeBindedTo(entity))
+				Expect(entity).NotTo(BeCreated())
+				Expect(response).NotTo(HaveStatus("201"))
+				Expect(response).NotTo(HaveHeader("Location"))
+				Expect(response).To(HaveEmptyBody())
+			})
+		})
+
+		Describe("negative case (Unsupported Media Type)", func() {
+			BeforeEach(func() {
+				entity = &ResourseMock{}
+			})
+
+			It("should not create entity and set errors to context", func() {
+				Expect(err).To(HaveType(echo.UnsupportedMediaType))
 				Expect(form).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response).NotTo(HaveStatus("201"))
@@ -77,13 +95,13 @@ var _ = Describe("Handlers", func() {
 			})
 		})
 
-		Describe("negative case (no resorce binded)", func() {
+		Describe("negative case (Failed Dependency)", func() {
 			It("should not create entity and set errors to context", func() {
+				Expect(err).To(HaveType(EmptyResourceError))
 				Expect(entity).To(BeNil())
 				Expect(response).NotTo(HaveStatus("201"))
 				Expect(response).NotTo(HaveHeader("Location"))
 				Expect(response).To(HaveEmptyBody())
-				Expect(context).To(HaveErrors())
 			})
 		})
 	})
