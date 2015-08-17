@@ -43,9 +43,9 @@ var _ = Describe("Handlers", func() {
 				Expect(err).To(BeNil())
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).To(BeCreated())
-				Expect(response).To(HaveStatus("201"))
-				Expect(response).To(HaveHeader("Location").WithUrlFor(entity))
-				Expect(response).To(HaveEmptyBody())
+				Expect(response.Code).To(Equal(201))
+				Expect(response.Header().Get("Location")).To(Equal(entity.Url()))
+				Expect(response.Body).To(BeEmpty())
 			})
 		})
 
@@ -55,12 +55,12 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(HaveType(ConflictError))
+				Expect(err).To(BeAssignableToTypeOf(ConflictError))
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
-				Expect(response).NotTo(HaveStatus("201"))
-				Expect(response).NotTo(HaveHeader("Location"))
-				Expect(response).To(HaveEmptyBody())
+				Expect(response.Code).NotTo(Equal(201))
+				Expect(response.Header().Get("Location")).To(BeNil())
+				Expect(response.Body).To(BeEmpty())
 			})
 		})
 
@@ -70,12 +70,12 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(HaveType(ValidationError))
+				Expect(err).To(BeAssignableToTypeOf(ValidationError))
 				Expect(form).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
-				Expect(response).NotTo(HaveStatus("201"))
-				Expect(response).NotTo(HaveHeader("Location"))
-				Expect(response).To(HaveEmptyBody())
+				Expect(response.Code).NotTo(Equal(201))
+				Expect(response.Header().Get("Location")).To(BeNil())
+				Expect(response.Body).To(BeEmpty())
 			})
 		})
 
@@ -85,23 +85,22 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(HaveType(echo.UnsupportedMediaType))
+				Expect(err).To(BeAssignableToTypeOf(echo.UnsupportedMediaType))
 				Expect(form).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
-				Expect(response).NotTo(HaveStatus("201"))
-				Expect(response).NotTo(HaveHeader("Location"))
-				Expect(response).To(HaveEmptyBody())
-				Expect(context).To(HaveErrors())
+				Expect(response.Code).NotTo(Equal(201))
+				Expect(response.Header().Get("Location")).To(BeNil())
+				Expect(response.Body).To(BeEmpty())
 			})
 		})
 
 		Describe("negative case (Failed Dependency)", func() {
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(HaveType(EmptyResourceError))
+				Expect(err).To(BeAssignableToTypeOf(EmptyResourceError))
 				Expect(entity).To(BeNil())
-				Expect(response).NotTo(HaveStatus("201"))
-				Expect(response).NotTo(HaveHeader("Location"))
-				Expect(response).To(HaveEmptyBody())
+				Expect(response.Code).NotTo(Equal(201))
+				Expect(response.Header().Get("Location")).To(BeNil())
+				Expect(response.Body).To(BeEmpty())
 			})
 		})
 	})
