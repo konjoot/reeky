@@ -1,35 +1,37 @@
 package matchers
 
 import (
-	. "github.com/konjoot/reeky/mocks"
-	. "github.com/konjoot/reeky/mocks/interfaces"
+	. "github.com/konjoot/reeky/test/interfaces"
 
+	"fmt"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )
 
-func BeBindedTo() *beBindedToMatcher {
-	return Matcher(&beBindedToMatcher{})
+func BeBindedTo(model BindableStringer) *baseMatcher {
+	return Matcher(&beBindedToMatcher{model: model})
 }
 
-type beBindedToMatcher struct{}
+type beBindedToMatcher struct {
+	model BindableStringer
+}
 
-func (m *beBindedToMatcher) Matcher() types.GomegaMatcher {
+func (_ *beBindedToMatcher) Matcher() types.GomegaMatcher {
 	return &matchers.BeTrueMatcher{}
 }
 
 func (m *beBindedToMatcher) Prepare(actual interface{}) interface{} {
-	return actual.(Bindable).Binded()
+	return m.model.BindedWith(actual)
 }
 
-func (m *beBindedToMatcher) Format(actual interface{}) string {
-	return actual.(Stringer).String()
+func (_ *beBindedToMatcher) Format(actual interface{}) string {
+	return fmt.Sprintf("%v", actual)
 }
 
 func (_ *beBindedToMatcher) Message() string {
-	return "to be binded"
+	return "to be binded to"
 }
 
-func (_ *beBindedToMatcher) String() (s string) {
-	return
+func (m *beBindedToMatcher) String() string {
+	return fmt.Sprintf("%v", m.model)
 }

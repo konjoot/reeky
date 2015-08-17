@@ -2,7 +2,7 @@ package matchers
 
 import (
 	"fmt"
-	ifaces "github.com/konjoot/reeky/interfaces"
+	ifaces "github.com/konjoot/reeky/test/interfaces"
 )
 
 func Matcher(m ifaces.MatcherIface) *baseMatcher {
