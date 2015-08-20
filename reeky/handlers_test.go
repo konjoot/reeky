@@ -1,106 +1,109 @@
 package reeky_test
 
 import (
-	. "github.com/konjoot/reeky/reeky"
-	"github.com/labstack/echo"
-
-	. "github.com/konjoot/reeky/matchers"
-	. "github.com/konjoot/reeky/mocks"
-	"github.com/konjoot/reeky/test"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"net/http"
 	"net/http/httptest"
+
+	. "github.com/konjoot/reeky/errors"
+	. "github.com/konjoot/reeky/matchers"
+	. "github.com/konjoot/reeky/mocks"
+	. "github.com/konjoot/reeky/reeky"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
+	"github.com/konjoot/reeky/test"
+	"github.com/labstack/echo"
 )
 
 var _ = Describe("Handlers", func() {
 	var (
 		err      error
-		form     map[string]string
-		context  *echo.Context
+		fMap     map[string]string
+		form     interface{}
 		entity   *ResourceMock
 		response *httptest.ResponseRecorder
 	)
 
 	BeforeEach(func() {
-		form = map[string]string{"Name": "Test", "Desc": "TestBoard"}
+		fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
+		form = test.Form()
 		response = httptest.NewRecorder()
 	})
 
 	Describe("Creator", func() {
 		JustBeforeEach(func() {
-			request := http.NewRequest("POST", "/tests", test.NewJsonReader(form))
+			request, _ := http.NewRequest("POST", "/tests", test.NewJsonReader(fMap))
 			context := test.Context(request, response, entity)
-			err := Creator(context)
+			err = Creator(context)
 		})
 
 		Describe("positive case", func() {
 			BeforeEach(func() {
-				entity = &ResourseMock{}
+				entity = &ResourceMock{Form: form}
 			})
 
 			It("should create entity and return right response", func() {
 				Expect(err).To(BeNil())
-				Expect(form).To(BeBindedTo(entity))
+				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).To(BeCreated())
 				Expect(response.Code).To(Equal(201))
 				Expect(response.Header().Get("Location")).To(Equal(entity.Url()))
-				Expect(response.Body).To(BeEmpty())
+				Expect(response.Body.Len()).To(BeZero())
 			})
 		})
 
 		Describe("negative case (Conflict)", func() {
 			BeforeEach(func() {
-				entity = &ResourseMock{Conflict: true}
+				entity = &ResourceMock{Form: form, Conflict: true}
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(BeAssignableToTypeOf(ConflictError))
-				Expect(form).To(BeBindedTo(entity))
+				Expect(err).To(BeTypeOf(ConflictError{}))
+				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
-				Expect(response.Header().Get("Location")).To(BeNil())
-				Expect(response.Body).To(BeEmpty())
+				Expect(response.Header().Get("Location")).To(BeEmpty())
+				Expect(response.Body.Len()).To(BeZero())
 			})
 		})
 
 		Describe("negative case (Unprocessable Entity)", func() {
 			BeforeEach(func() {
-				entity = &ResourseMock{Invalid: true}
+				entity = &ResourceMock{Form: form, Invalid: true}
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(BeAssignableToTypeOf(ValidationError))
-				Expect(form).To(BeBindedTo(entity))
+				Expect(err).To(BeTypeOf(ValidationError{}))
+				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
-				Expect(response.Header().Get("Location")).To(BeNil())
-				Expect(response.Body).To(BeEmpty())
+				Expect(response.Header().Get("Location")).To(BeEmpty())
+				Expect(response.Body.Len()).To(BeZero())
 			})
 		})
 
 		Describe("negative case (Unsupported Media Type)", func() {
 			BeforeEach(func() {
-				entity = &ResourseMock{}
+				entity = &ResourceMock{Form: form}
 			})
 
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(BeAssignableToTypeOf(echo.UnsupportedMediaType))
-				Expect(form).NotTo(BeBindedTo(entity))
+				Expect(err).To(BeTypeOf(echo.UnsupportedMediaType))
+				Expect(fMap).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
-				Expect(response.Header().Get("Location")).To(BeNil())
-				Expect(response.Body).To(BeEmpty())
+				Expect(response.Header().Get("Location")).To(BeEmpty())
+				Expect(response.Body.Len()).To(BeZero())
 			})
 		})
 
 		Describe("negative case (Failed Dependency)", func() {
 			It("should not create entity and set errors to context", func() {
-				Expect(err).To(BeAssignableToTypeOf(EmptyResourceError))
+				Expect(err).To(BeTypeOf(EmptyResourceError{}))
 				Expect(entity).To(BeNil())
 				Expect(response.Code).NotTo(Equal(201))
-				Expect(response.Header().Get("Location")).To(BeNil())
-				Expect(response.Body).To(BeEmpty())
+				Expect(response.Header().Get("Location")).To(BeEmpty())
+				Expect(response.Body.Len()).To(BeZero())
 			})
 		})
 	})
