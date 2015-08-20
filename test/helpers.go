@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -27,6 +28,10 @@ func Context(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo
 func NewJsonReader(form interface{}) io.Reader {
 	jsForm, _ := json.Marshal(form)
 	return bytes.NewReader(jsForm)
+}
+
+func NewStringReader(s string) io.Reader {
+	return strings.NewReader(s)
 }
 
 func Form() *testForm {
