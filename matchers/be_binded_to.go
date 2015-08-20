@@ -10,17 +10,17 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-type ModelIface interface {
+type modelIface interface {
 	Bindable
 	Stringer
 }
 
-func BeBindedTo(model ModelIface) *baseMatcher {
+func BeBindedTo(model modelIface) *baseMatcher {
 	return Matcher(&beBindedToMatcher{model: model})
 }
 
 type beBindedToMatcher struct {
-	model ModelIface
+	model modelIface
 }
 
 func (_ *beBindedToMatcher) Matcher() types.GomegaMatcher {
