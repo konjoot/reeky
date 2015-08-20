@@ -2,6 +2,7 @@ package matchers
 
 import (
 	. "github.com/konjoot/reeky/mocks"
+
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )

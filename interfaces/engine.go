@@ -1,8 +1,6 @@
 package interfaces
 
-import (
-	"github.com/labstack/echo"
-)
+import "github.com/labstack/echo"
 
 type EngineIface interface {
 	Run(addr string)

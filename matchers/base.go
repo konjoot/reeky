@@ -2,6 +2,7 @@ package matchers
 
 import (
 	"fmt"
+
 	ifaces "github.com/konjoot/reeky/test/interfaces"
 )
 

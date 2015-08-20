@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	ifaces "github.com/konjoot/reeky/interfaces"
+
 	"github.com/onsi/gomega/types"
 )
 

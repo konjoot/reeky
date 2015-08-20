@@ -1,11 +1,11 @@
 package reeky_test
 
 import (
-	. "github.com/konjoot/reeky/reeky"
 	mw "github.com/labstack/echo/middleware"
 
 	. "github.com/konjoot/reeky/matchers"
 	. "github.com/konjoot/reeky/mocks"
+	. "github.com/konjoot/reeky/reeky"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

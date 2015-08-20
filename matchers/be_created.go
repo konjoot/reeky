@@ -1,9 +1,9 @@
 package matchers
 
 import (
+	. "github.com/konjoot/reeky/interfaces"
 	. "github.com/konjoot/reeky/test/interfaces"
 
-	"fmt"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )
@@ -23,7 +23,7 @@ func (m *beCreatedMatcher) Prepare(actual interface{}) interface{} {
 }
 
 func (m *beCreatedMatcher) Format(actual interface{}) string {
-	return fmt.Sprintf("%v", actual)
+	return actual.(Stringer).String()
 }
 
 func (_ *beCreatedMatcher) Message() string {

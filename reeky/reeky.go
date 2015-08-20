@@ -2,6 +2,7 @@ package reeky
 
 import (
 	"fmt"
+
 	. "github.com/konjoot/reeky/interfaces"
 )
 

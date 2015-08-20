@@ -1,12 +1,12 @@
 package reeky_test
 
 import (
-	. "github.com/konjoot/reeky/reeky"
-	"github.com/labstack/echo"
-
 	. "github.com/konjoot/reeky/matchers"
+	. "github.com/konjoot/reeky/reeky"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/labstack/echo"
 )
 
 var _ = Describe("App", func() {

@@ -2,10 +2,11 @@ package matchers
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/labstack/echo"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
-	"strings"
 )
 
 func Handle(method string) *handleMatcher {

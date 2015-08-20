@@ -2,9 +2,10 @@ package mocks
 
 import (
 	"fmt"
-	"github.com/labstack/echo"
 	"reflect"
 	"runtime"
+
+	"github.com/labstack/echo"
 )
 
 type EngineMock struct {
@@ -37,7 +38,7 @@ func (e *EngineMock) MiddleWares() []string {
 }
 
 func (e *EngineMock) String() string {
-	return fmt.Sprintf("EngineMock{running: \"%t\", port: \"%s\"}", e.running, e.port)
+	return fmt.Sprintf("EngineMock{running: %t, port: \"%s\"}", e.running, e.port)
 }
 
 func (e *EngineMock) Get(path string, h echo.Handler)    {}

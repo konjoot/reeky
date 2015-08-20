@@ -1,19 +1,26 @@
 package matchers
 
 import (
+	"fmt"
+
+	. "github.com/konjoot/reeky/interfaces"
 	. "github.com/konjoot/reeky/test/interfaces"
 
-	"fmt"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )
 
-func BeBindedTo(model BindableStringer) *baseMatcher {
+type ModelIface interface {
+	Bindable
+	Stringer
+}
+
+func BeBindedTo(model ModelIface) *baseMatcher {
 	return Matcher(&beBindedToMatcher{model: model})
 }
 
 type beBindedToMatcher struct {
-	model BindableStringer
+	model ModelIface
 }
 
 func (_ *beBindedToMatcher) Matcher() types.GomegaMatcher {
