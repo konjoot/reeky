@@ -3,10 +3,16 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/labstack/echo"
 	"io"
 	"net/http"
+
+	"github.com/labstack/echo"
 )
+
+type testForm struct {
+	Name string
+	Desc string
+}
 
 func Context(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo.Context) {
 	c = echo.NewContext(req, echo.NewResponse(res), echo.New())
@@ -21,4 +27,8 @@ func Context(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo
 func NewJsonReader(form interface{}) io.Reader {
 	jsForm, _ := json.Marshal(form)
 	return bytes.NewReader(jsForm)
+}
+
+func Form() *testForm {
+	return &testForm{}
 }
