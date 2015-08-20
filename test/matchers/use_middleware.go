@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	. "github.com/konjoot/reeky/mocks"
+	. "github.com/konjoot/reeky/test/mocks"
 
 	"github.com/labstack/echo"
 	"github.com/onsi/gomega/matchers"

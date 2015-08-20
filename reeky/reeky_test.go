@@ -1,9 +1,9 @@
 package reeky_test
 
 import (
-	. "github.com/konjoot/reeky/matchers"
-	. "github.com/konjoot/reeky/mocks"
 	. "github.com/konjoot/reeky/reeky"
+	. "github.com/konjoot/reeky/test/matchers"
+	. "github.com/konjoot/reeky/test/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
