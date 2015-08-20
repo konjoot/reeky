@@ -1,6 +1,7 @@
 package reeky_test
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 
@@ -18,6 +19,7 @@ import (
 var _ = Describe("Handlers", func() {
 	var (
 		err      error
+		body     io.Reader
 		fMap     map[string]string
 		form     interface{}
 		entity   *ResourceMock
@@ -26,13 +28,14 @@ var _ = Describe("Handlers", func() {
 
 	BeforeEach(func() {
 		fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
+		body = test.NewJsonReader(fMap)
 		form = test.Form()
 		response = httptest.NewRecorder()
 	})
 
 	Describe("Creator", func() {
 		JustBeforeEach(func() {
-			request, _ := http.NewRequest("POST", "/tests", test.NewJsonReader(fMap))
+			request, _ := http.NewRequest("POST", "/tests", body)
 			context := test.Context(request, response, entity)
 			err = Creator(context)
 		})
@@ -57,7 +60,7 @@ var _ = Describe("Handlers", func() {
 				entity = &ResourceMock{Form: form, Conflict: true}
 			})
 
-			It("should not create entity and set errors to context", func() {
+			It("should not create entity and return ConflictError", func() {
 				Expect(err).To(BeTypeOf(ConflictError{}))
 				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
@@ -72,7 +75,7 @@ var _ = Describe("Handlers", func() {
 				entity = &ResourceMock{Form: form, Invalid: true}
 			})
 
-			It("should not create entity and set errors to context", func() {
+			It("should not create entity and return ValidationError", func() {
 				Expect(err).To(BeTypeOf(ValidationError{}))
 				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
@@ -84,10 +87,11 @@ var _ = Describe("Handlers", func() {
 
 		Describe("negative case (Unsupported Media Type)", func() {
 			BeforeEach(func() {
+				body = test.NewStringReader("bad request")
 				entity = &ResourceMock{Form: form}
 			})
 
-			It("should not create entity and set errors to context", func() {
+			It("should not create entity and return UnsupportedMediaType error", func() {
 				Expect(err).To(BeTypeOf(echo.UnsupportedMediaType))
 				Expect(fMap).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
@@ -98,7 +102,7 @@ var _ = Describe("Handlers", func() {
 		})
 
 		Describe("negative case (Failed Dependency)", func() {
-			It("should not create entity and set errors to context", func() {
+			It("should not create entity and return EmptyResourceError", func() {
 				Expect(err).To(BeTypeOf(EmptyResourceError{}))
 				Expect(entity).To(BeNil())
 				Expect(response.Code).NotTo(Equal(201))
