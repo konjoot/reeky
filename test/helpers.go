@@ -16,10 +16,12 @@ type testForm struct {
 }
 
 func Context(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo.Context) {
+	req.Header.Set("Content-Type", "application/json")
+
 	c = echo.NewContext(req, echo.NewResponse(res), echo.New())
 
 	if r != nil {
-		c.Set("Resource", r)
+		c.Set("resource", r)
 	}
 
 	return
