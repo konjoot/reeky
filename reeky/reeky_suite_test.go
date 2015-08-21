@@ -9,5 +9,5 @@ import (
 
 func TestReeky(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Reeky Suite")
+	RunSpecs(t, "Reeky")
 }

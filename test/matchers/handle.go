@@ -23,7 +23,7 @@ func (m *handleMatcher) On(path string) *handleMatcher {
 }
 
 func (m *handleMatcher) By(handler string) *baseMatcher {
-	m.expected.Handler = "github.com/konjoot/reeky/reeky." + handler
+	m.expected.Handler = "github.com/konjoot/reeky/handlers." + handler
 	return Matcher(m)
 }
 
