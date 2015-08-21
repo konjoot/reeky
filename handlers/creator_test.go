@@ -1,19 +1,20 @@
-package reeky_test
+package handlers_test
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/konjoot/reeky/test"
+	// "github.com/labstack/echo"
+
 	. "github.com/konjoot/reeky/errors"
-	. "github.com/konjoot/reeky/reeky"
+	. "github.com/konjoot/reeky/handlers"
 	. "github.com/konjoot/reeky/test/matchers"
 	. "github.com/konjoot/reeky/test/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"github.com/konjoot/reeky/test"
-	"github.com/labstack/echo"
 )
 
 var _ = Describe("Handlers", func() {
@@ -42,7 +43,7 @@ var _ = Describe("Handlers", func() {
 
 		Describe("positive case", func() {
 			BeforeEach(func() {
-				entity = &ResourceMock{Form: form}
+				entity = &ResourceMock{F: form}
 			})
 
 			It("should create entity and return right response", func() {
@@ -57,7 +58,7 @@ var _ = Describe("Handlers", func() {
 
 		Describe("negative case (Conflict)", func() {
 			BeforeEach(func() {
-				entity = &ResourceMock{Form: form, Conflict: true}
+				entity = &ResourceMock{F: form, Conflict: true}
 			})
 
 			It("should not create entity and return ConflictError", func() {
@@ -72,7 +73,7 @@ var _ = Describe("Handlers", func() {
 
 		Describe("negative case (Unprocessable Entity)", func() {
 			BeforeEach(func() {
-				entity = &ResourceMock{Form: form, Invalid: true}
+				entity = &ResourceMock{F: form, Invalid: true}
 			})
 
 			It("should not create entity and return ValidationError", func() {
@@ -88,11 +89,11 @@ var _ = Describe("Handlers", func() {
 		Describe("negative case (Unsupported Media Type)", func() {
 			BeforeEach(func() {
 				body = test.NewStringReader("bad request")
-				entity = &ResourceMock{Form: form}
+				entity = &ResourceMock{F: form}
 			})
 
 			It("should not create entity and return UnsupportedMediaType error", func() {
-				Expect(err).To(BeTypeOf(echo.UnsupportedMediaType))
+				Expect(err).To(BeTypeOf(errors.New("echo ⇒ unsupported media type")))
 				Expect(fMap).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
