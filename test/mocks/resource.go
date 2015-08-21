@@ -6,10 +6,11 @@ import (
 )
 
 type ResourceMock struct {
-	Form     interface{}
+	F        interface{}
 	Invalid  bool
 	Conflict bool
-	created  bool
+
+	created bool
 }
 
 type formMap map[string]string
@@ -28,7 +29,7 @@ func (r *ResourceMock) BindedWith(f interface{}) (binded bool) {
 		return
 	}
 
-	rForm := reflect.ValueOf(r.Form).Elem()
+	rForm := reflect.ValueOf(r.F).Elem()
 
 	for name, val = range f.(formMap) {
 		if field := rForm.FieldByName(name); field.IsValid() && field.Interface() == val {
@@ -41,9 +42,19 @@ func (r *ResourceMock) BindedWith(f interface{}) (binded bool) {
 }
 
 func (r *ResourceMock) String() string {
-	return fmt.Sprintf("ResourceMock{Invalid: %t, Conflict: %t, created: %t, Form: %#v}", r.Invalid, r.Conflict, r.created, r.Form)
+	return fmt.Sprintf("ResourceMock{Invalid: %t, Conflict: %t, created: %t, Form: %#v}", r.Invalid, r.Conflict, r.created, r.F)
 }
 
 func (r *ResourceMock) Url() string {
 	return "some/url"
+}
+
+func (r *ResourceMock) Form() interface{} {
+	return r.F
+}
+
+func (r *ResourceMock) Save() error {
+	r.created = !(r.Conflict && r.Invalid)
+
+	return nil
 }
