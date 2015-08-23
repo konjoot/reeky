@@ -25,7 +25,7 @@ func Creator(c *echo.Context) (e error) {
 
 	c.Response().Header().Set("Location", r.Url())
 
-	if e = c.JSON(http.StatusCreated, ""); e != nil {
+	if e = c.NoContent(http.StatusCreated); e != nil {
 		return
 	}
 
