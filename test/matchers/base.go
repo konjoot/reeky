@@ -3,14 +3,14 @@ package matchers
 import (
 	"fmt"
 
-	ifaces "github.com/konjoot/reeky/test/interfaces"
+	i "github.com/konjoot/reeky/test/interfaces"
 )
 
-func Matcher(m ifaces.MatcherIface) *baseMatcher {
+func Matcher(m i.MatcherIface) *baseMatcher {
 	return &baseMatcher{m}
 }
 
-type baseMatcher struct{ ifaces.MatcherIface }
+type baseMatcher struct{ i.MatcherIface }
 
 func (m *baseMatcher) Match(actual interface{}) (success bool, err error) {
 	return m.Matcher().Match(m.Prepare(actual))

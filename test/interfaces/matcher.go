@@ -1,9 +1,9 @@
 package interfaces
 
 import (
-	ifaces "github.com/konjoot/reeky/interfaces"
-
 	"github.com/onsi/gomega/types"
+
+	i "github.com/konjoot/reeky/interfaces"
 )
 
 type MatcherIface interface {
@@ -11,5 +11,5 @@ type MatcherIface interface {
 	Prepare(actual interface{}) interface{}
 	Format(actual interface{}) string
 	Message() string
-	ifaces.Stringer
+	i.Stringer
 }

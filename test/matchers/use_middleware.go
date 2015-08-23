@@ -6,11 +6,11 @@ import (
 	"runtime"
 	"strings"
 
-	. "github.com/konjoot/reeky/test/mocks"
-
 	"github.com/labstack/echo"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
+
+	. "github.com/konjoot/reeky/test/mocks"
 )
 
 func UseMiddleWare(midware echo.MiddlewareFunc) *baseMatcher {

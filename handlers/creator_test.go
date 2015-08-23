@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 
 	"github.com/konjoot/reeky/test"
-	// "github.com/labstack/echo"
 
 	. "github.com/konjoot/reeky/errors"
 	. "github.com/konjoot/reeky/handlers"

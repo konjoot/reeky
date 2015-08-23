@@ -1,10 +1,10 @@
 package matchers
 
 import (
-	. "github.com/konjoot/reeky/test/mocks"
-
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
+
+	. "github.com/konjoot/reeky/test/mocks"
 )
 
 func BeRunning() *baseMatcher {

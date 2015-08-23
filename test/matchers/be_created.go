@@ -1,11 +1,11 @@
 package matchers
 
 import (
-	. "github.com/konjoot/reeky/interfaces"
-	. "github.com/konjoot/reeky/test/interfaces"
-
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
+
+	. "github.com/konjoot/reeky/interfaces"
+	. "github.com/konjoot/reeky/test/interfaces"
 )
 
 func BeCreated() *baseMatcher {
