@@ -13,8 +13,6 @@ type ResourceMock struct {
 	created bool
 }
 
-type formMap map[string]string
-
 func (r *ResourceMock) Created() bool {
 	return r.created
 }
@@ -25,13 +23,13 @@ func (r *ResourceMock) BindedWith(f interface{}) (binded bool) {
 		val  interface{}
 	)
 
-	if _, ok := f.(formMap); !ok {
+	if _, ok := f.(map[string]string); !ok {
 		return
 	}
 
 	rForm := reflect.ValueOf(r.F).Elem()
 
-	for name, val = range f.(formMap) {
+	for name, val = range f.(map[string]string) {
 		if field := rForm.FieldByName(name); field.IsValid() && field.Interface() == val {
 			continue
 		}
