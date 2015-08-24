@@ -27,6 +27,18 @@ func Context(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo
 	return
 }
 
+func BadContext(req *http.Request, res http.ResponseWriter, r interface{}) (c *echo.Context) {
+	req.Header.Set("Content-Type", "")
+
+	c = echo.NewContext(req, echo.NewResponse(res), echo.New())
+
+	if r != nil {
+		c.Set("resource", r)
+	}
+
+	return
+}
+
 func NewJsonReader(form interface{}) io.Reader {
 	jsForm, _ := json.Marshal(form)
 	return bytes.NewReader(jsForm)
