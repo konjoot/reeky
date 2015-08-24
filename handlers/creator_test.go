@@ -27,14 +27,14 @@ var _ = Describe("Handlers", func() {
 		response *httptest.ResponseRecorder
 	)
 
-	BeforeEach(func() {
-		fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
-		body = test.NewJsonReader(fMap)
-		form = test.Form()
-		response = httptest.NewRecorder()
-	})
-
 	Describe("Creator", func() {
+		BeforeEach(func() {
+			fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
+			body = test.NewJsonReader(fMap)
+			form = test.Form()
+			response = httptest.NewRecorder()
+		})
+
 		JustBeforeEach(func() {
 			request, _ := http.NewRequest("POST", "/tests", body)
 			context := test.Context(request, response, entity)
