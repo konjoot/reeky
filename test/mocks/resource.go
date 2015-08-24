@@ -3,12 +3,13 @@ package mocks
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/konjoot/reeky/errors"
 )
 
 type ResourceMock struct {
-	F        interface{}
-	Invalid  bool
-	Conflict bool
+	F       interface{}
+	Invalid bool
 
 	created bool
 }
@@ -40,7 +41,7 @@ func (r *ResourceMock) BindedWith(f interface{}) (binded bool) {
 }
 
 func (r *ResourceMock) String() string {
-	return fmt.Sprintf("ResourceMock{Invalid: %t, Conflict: %t, created: %t, Form: %#v}", r.Invalid, r.Conflict, r.created, r.F)
+	return fmt.Sprintf("ResourceMock{Invalid: %t, created: %t, Form: %#v}", r.Invalid, r.created, r.F)
 }
 
 func (r *ResourceMock) Url() string {
@@ -51,8 +52,13 @@ func (r *ResourceMock) Form() interface{} {
 	return r.F
 }
 
-func (r *ResourceMock) Save() error {
-	r.created = !(r.Conflict && r.Invalid)
+func (r *ResourceMock) Save() (e error) {
+	if r.Invalid {
+		e = errors.NewConflictError()
+		return
+	}
 
-	return nil
+	r.created = true
+
+	return
 }
