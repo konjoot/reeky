@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -55,28 +56,13 @@ var _ = Describe("Handlers", func() {
 			})
 		})
 
-		Describe("negative case (Conflict)", func() {
-			BeforeEach(func() {
-				entity = &ResourceMock{F: form, Conflict: true}
-			})
-
-			It("should not create entity and return ConflictError", func() {
-				Expect(err).To(BeTypeOf(ConflictError{}))
-				Expect(fMap).To(BeBindedTo(entity))
-				Expect(entity).NotTo(BeCreated())
-				Expect(response.Code).NotTo(Equal(201))
-				Expect(response.Header().Get("Location")).To(BeEmpty())
-				Expect(response.Body.Len()).To(BeZero())
-			})
-		})
-
-		Describe("negative case (Unprocessable Entity)", func() {
+		Describe("negative case (Error while saving)", func() {
 			BeforeEach(func() {
 				entity = &ResourceMock{F: form, Invalid: true}
 			})
 
-			It("should not create entity and return ValidationError", func() {
-				Expect(err).To(BeTypeOf(ValidationError{}))
+			It("should not create entity and return ConflictError", func() {
+				Expect(err).To(BeTypeOf(&ConflictError{}))
 				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
@@ -85,14 +71,14 @@ var _ = Describe("Handlers", func() {
 			})
 		})
 
-		Describe("negative case (Unsupported Media Type)", func() {
+		Describe("negative case (Syntax error)", func() {
 			BeforeEach(func() {
 				body = test.NewStringReader("bad request")
 				entity = &ResourceMock{F: form}
 			})
 
-			It("should not create entity and return UnsupportedMediaType error", func() {
-				Expect(err).To(BeTypeOf(errors.New("echo ⇒ unsupported media type")))
+			It("should not create entity and return SyntaxError error", func() {
+				Expect(err).To(BeTypeOf(&json.SyntaxError{}))
 				Expect(fMap).NotTo(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
@@ -101,10 +87,35 @@ var _ = Describe("Handlers", func() {
 			})
 		})
 
+		Describe("negative case (UnsupportedMediaType error)", func() {
+			JustBeforeEach(func() {
+				response = httptest.NewRecorder()
+				entity = &ResourceMock{F: form}
+				request, _ := http.NewRequest("POST", "/tests", body)
+				context := test.BadContext(request, response, entity)
+				err = Creator(context)
+			})
+
+			It("should not create entity and return UnsupportedMediaType error", func() {
+				Expect(err).To(Equal(errors.New("echo ⇒ unsupported media type")))
+				Expect(fMap).NotTo(BeBindedTo(entity))
+				Expect(entity).NotTo(BeCreated())
+				Expect(response.Code).NotTo(Equal(201))
+				Expect(response.Header().Get("Location")).NotTo(Equal(entity.Url()))
+				Expect(response.Body.Len()).To(BeZero())
+			})
+		})
+
 		Describe("negative case (Failed Dependency)", func() {
+			JustBeforeEach(func() {
+				response = httptest.NewRecorder()
+				request, _ := http.NewRequest("POST", "/tests", body)
+				context := test.Context(request, response, nil)
+				err = Creator(context)
+			})
+
 			It("should not create entity and return EmptyResourceError", func() {
-				Expect(err).To(BeTypeOf(EmptyResourceError{}))
-				Expect(entity).To(BeNil())
+				Expect(err).To(BeTypeOf(&EmptyResourceError{}))
 				Expect(response.Code).NotTo(Equal(201))
 				Expect(response.Header().Get("Location")).To(BeEmpty())
 				Expect(response.Body.Len()).To(BeZero())
