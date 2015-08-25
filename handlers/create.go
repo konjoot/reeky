@@ -8,7 +8,7 @@ import (
 	i "github.com/konjoot/reeky/interfaces"
 )
 
-func Creator(c *echo.Context) (e error) {
+func Create(c *echo.Context) (e error) {
 	var r i.ResourceIface
 
 	if r, e = Resource(c); e != nil {

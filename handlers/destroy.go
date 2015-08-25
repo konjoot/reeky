@@ -2,6 +2,6 @@ package handlers
 
 import "github.com/labstack/echo"
 
-func Destroyer(c *echo.Context) (e error) {
+func Destroy(c *echo.Context) (e error) {
 	return
 }

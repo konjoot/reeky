@@ -23,11 +23,11 @@ var _ = Describe("App", func() {
 
 	Describe("Routes", func() {
 		It("/boards", func() {
-			Expect(engine).To(Handle("GET").On("/boards/:id").By("Getter"))
-			Expect(engine).To(Handle("GET").On("/boards").By("ListGetter"))
-			Expect(engine).To(Handle("PUT").On("/boards/:id").By("Updater"))
-			Expect(engine).To(Handle("POST").On("/boards").By("Creator"))
-			Expect(engine).To(Handle("DELETE").On("/boards/:id").By("Destroyer"))
+			Expect(engine).To(Handle("GET").On("/boards/:id").By("Get"))
+			Expect(engine).To(Handle("GET").On("/boards").By("List"))
+			Expect(engine).To(Handle("PUT").On("/boards/:id").By("Update"))
+			Expect(engine).To(Handle("POST").On("/boards").By("Create"))
+			Expect(engine).To(Handle("DELETE").On("/boards/:id").By("Destroy"))
 		})
 	})
 })

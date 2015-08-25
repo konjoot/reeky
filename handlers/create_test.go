@@ -27,7 +27,7 @@ var _ = Describe("Handlers", func() {
 		response *httptest.ResponseRecorder
 	)
 
-	Describe("Creator", func() {
+	Describe("Create", func() {
 		BeforeEach(func() {
 			fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
 			body = test.NewJsonReader(fMap)
@@ -38,7 +38,7 @@ var _ = Describe("Handlers", func() {
 		JustBeforeEach(func() {
 			request, _ := http.NewRequest("POST", "/tests", body)
 			context := test.Context(request, response, entity)
-			err = Creator(context)
+			err = Create(context)
 		})
 
 		Describe("positive case", func() {
@@ -93,7 +93,7 @@ var _ = Describe("Handlers", func() {
 				entity = &ResourceMock{F: form}
 				request, _ := http.NewRequest("POST", "/tests", body)
 				context := test.BadContext(request, response, entity)
-				err = Creator(context)
+				err = Create(context)
 			})
 
 			It("should not create entity and return UnsupportedMediaType error", func() {
@@ -111,7 +111,7 @@ var _ = Describe("Handlers", func() {
 				response = httptest.NewRecorder()
 				request, _ := http.NewRequest("POST", "/tests", body)
 				context := test.Context(request, response, nil)
-				err = Creator(context)
+				err = Create(context)
 			})
 
 			It("should not create entity and return EmptyResourceError", func() {
