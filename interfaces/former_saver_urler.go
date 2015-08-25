@@ -1,6 +1,6 @@
 package interfaces
 
-type ResourceIface interface {
+type FormerSaverUrler interface {
 	Former
 	Saver
 	Urler

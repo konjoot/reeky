@@ -3,16 +3,20 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/konjoot/reeky/errors"
 	"github.com/labstack/echo"
 
 	i "github.com/konjoot/reeky/interfaces"
 )
 
 func Create(c *echo.Context) (e error) {
-	var r i.ResourceIface
+	var (
+		r  i.FormerSaverUrler
+		ok bool
+	)
 
-	if r, e = Resource(c); e != nil {
-		return
+	if r, ok = c.Get("resource").(i.FormerSaverUrler); !ok {
+		return errors.NewEmptyResourceError()
 	}
 
 	if e = c.Bind(r.Form()); e != nil {
