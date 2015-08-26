@@ -31,7 +31,7 @@ var _ = Describe("Handlers", func() {
 		BeforeEach(func() {
 			fMap = map[string]string{"Name": "Test", "Desc": "TestDesc"}
 			body = test.NewJsonReader(fMap)
-			form = test.Form()
+			form = &test.Form{}
 			response = httptest.NewRecorder()
 		})
 
@@ -62,7 +62,7 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should not create entity and return ConflictError", func() {
-				Expect(err).To(BeTypeOf(&ConflictError{}))
+				Expect(err).To(BeTypeOf(NewConflictError()))
 				Expect(fMap).To(BeBindedTo(entity))
 				Expect(entity).NotTo(BeCreated())
 				Expect(response.Code).NotTo(Equal(201))
@@ -115,7 +115,7 @@ var _ = Describe("Handlers", func() {
 			})
 
 			It("should not create entity and return EmptyResourceError", func() {
-				Expect(err).To(BeTypeOf(&EmptyResourceError{}))
+				Expect(err).To(BeTypeOf(NewEmptyResourceError()))
 				Expect(response.Code).NotTo(Equal(201))
 				Expect(response.Header().Get("Location")).To(BeEmpty())
 				Expect(response.Body.Len()).To(BeZero())
