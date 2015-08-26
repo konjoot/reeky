@@ -8,10 +8,13 @@ import (
 )
 
 type ResourceMock struct {
-	F       interface{}
-	Invalid bool
+	F        interface{}
+	V        interface{}
+	Invalid  bool
+	NotFound bool
 
-	created bool
+	created  bool
+	findedBy string
 }
 
 func (r *ResourceMock) Created() bool {
@@ -41,7 +44,7 @@ func (r *ResourceMock) BindedWith(f interface{}) (binded bool) {
 }
 
 func (r *ResourceMock) String() string {
-	return fmt.Sprintf("ResourceMock{Invalid: %t, created: %t, Form: %#v}", r.Invalid, r.created, r.F)
+	return fmt.Sprintf("ResourceMock{Invalid: %t, created: %t, findedBy: %#v, Form: %#v, View: %#v}", r.Invalid, r.created, r.findedBy, r.F, r.V)
 }
 
 func (r *ResourceMock) Url() string {
@@ -61,4 +64,12 @@ func (r *ResourceMock) Save() (e error) {
 	r.created = true
 
 	return
+}
+
+func (r *ResourceMock) FindedBy() string {
+	return r.findedBy
+}
+
+func (r *ResourceMock) Finded() bool {
+	return r.findedBy != ""
 }
