@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-type testForm struct {
+type Form struct {
 	Name string
 	Desc string
 }
@@ -46,8 +46,4 @@ func NewJsonReader(form interface{}) io.Reader {
 
 func NewStringReader(s string) io.Reader {
 	return strings.NewReader(s)
-}
-
-func Form() *testForm {
-	return &testForm{}
 }
