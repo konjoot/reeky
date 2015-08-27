@@ -5,6 +5,8 @@ import (
 	"reflect"
 
 	"github.com/konjoot/reeky/errors"
+
+	i "github.com/konjoot/reeky/interfaces"
 )
 
 type ResourceMock struct {
@@ -72,4 +74,13 @@ func (r *ResourceMock) FindedBy() string {
 
 func (r *ResourceMock) Finded() bool {
 	return r.findedBy != ""
+}
+
+func (r *ResourceMock) Find(id string) (i.Viewer, error) {
+	r.findedBy = id
+	return r, nil
+}
+
+func (r *ResourceMock) View() interface{} {
+	return r.V
 }
